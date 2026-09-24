@@ -1,0 +1,10 @@
+{
+  "freq": "weekly",
+  "dtstart": "2026-01-05",
+  "byday": [
+    "MO",
+    "WE",
+    "FR"
+  ],
+  "count": 6
+}

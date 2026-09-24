@@ -1,0 +1,8 @@
+case=case-4
+note=每年 2 月 29 日：平年没有这一天就跳过
+total=1934
+first=2024-02-29
+last=9996-02-29
+periods=100000
+query=nth,2,2028-02-29
+query=next,2024-02-29,2028-02-29

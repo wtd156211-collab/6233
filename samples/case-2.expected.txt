@@ -1,0 +1,9 @@
+case=case-2
+note=每周一三五 + COUNT 与 UNTIL（截止当天算在内）
+total=6
+first=2026-01-05
+last=2026-01-16
+periods=2
+query=nth,6,2026-01-16
+query=nth,7,error,OUT_OF_RANGE,n=7 total=6
+query=next,2026-01-09,2026-01-12

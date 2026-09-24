@@ -1,0 +1,12 @@
+{
+  "freq": "monthly",
+  "dtstart": "2026-01-01",
+  "interval": 2,
+  "bymonthday": [
+    1,
+    15
+  ],
+  "bysetpos": [
+    2
+  ]
+}

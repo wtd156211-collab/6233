@@ -1,0 +1,9 @@
+case=case-1
+note=每天一次 + 大 N（第 100000 次）
+total=100000
+first=2026-01-01
+last=2299-10-16
+periods=100000
+query=nth,100000,2299-10-16
+query=nth,1,2026-01-01
+query=next,2030-05-05,2030-05-06

@@ -1,0 +1,8 @@
+case=case-8
+note=每两个月 + 每月 1 号与 15 号 + 第 2 个
+total=47844
+first=2026-01-15
+last=9999-11-15
+periods=100000
+query=nth,3,2026-05-15
+query=next,2026-05-15,2026-07-15

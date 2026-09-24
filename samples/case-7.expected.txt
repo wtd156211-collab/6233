@@ -1,0 +1,3 @@
+case=case-7
+note=兜底：每月 2 月 30 日，永远排不出来
+error,NO_OCCURRENCE,searched=100000
