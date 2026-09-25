@@ -55,6 +55,39 @@ query=next,2030-05-05,2030-05-06
 
 `samples/case-N.rule.json` 与 `samples/case-N.expected.txt` 一一对应：case-1 每天 + 第 100000 次；case-2 周一三五 + COUNT/UNTIL；case-3 每月 31 号；case-4 每年 2 月 29（平年跳过）；case-5 每月第 5 个星期五；case-6 取消与挪动后序号顶上来；case-7 永远排不出来的兜底；case-8 每两个月取每月第 2 个日期。
 
-## 待补的文档
+## 实现说明
 
-实现完成后写清楚：第 N 次是怎么直接推算的、下一次是怎么定位的、兜底扫描上限在哪些分支上生效。
+代码分三块：`rrule_engine.py`（引擎）、`main.py`（命令行驱动与样例查询表）、`test_engine.py`（unittest）。
+
+### 第 N 次是怎么直接推算的
+
+不逐天推进。时间被切成「周期」：第 k 个周期的起始日由 k 与 interval 直接算出
+（日频 `dtstart + k*interval` 天；周频取 dtstart 所在周的周一再加 `k*interval` 周；
+月频/年频用整数的年月换算，不构造中间日期）。每个周期内由 BYxxx 一次性算出候选
+日期集合，bysetpos 在周期内有序集合上按下标取（负数从末尾数）。展开以周期为单位
+扫描，最终序列 = （原始序列 − exdates − moves.from + moves.to) 排序去重后按 count
+截断；`nth(N)` 是对这个有序序列的 O(1) 索引。count 作用在最终序列上，因此带 count
+时多扫 `len(exdates)+len(moves)` 条原始日期，保证取消/挪动后前 count 条仍然正确。
+
+### 下一次是怎么定位的
+
+`next_after(t)` 在已展开的有序最终序列上做二分查找（`bisect_right`，严格大于 t），
+O(log n)。展开结果在 Engine 上缓存，同一份规则重复查询不重复扫描。
+
+### 兜底扫描上限在哪些分支上生效
+
+- 展开的周期扫描循环：四种频率共用同一个 `while k < 100000` 循环，任何规则最多
+  扫描 100000 个周期，扫完仍无结果就是 `NO_OCCURRENCE,searched=100000`；
+- 日期溢出分支：周期起始日超出 9999-12-31 时，之后的周期都不可表示。无 count 时
+  序列在兜底上限处截至、periods 记满 100000（case-3/4/5/8 即此分支）；有 count 时
+  按实际扫描周期数停止；
+- `until` 分支：周期起始日严格大于 until 即停止扫描，until 当天的发生保留；
+- `nth`/`next` 复用同一份展开结果，自身不额外扫描，不会引入新的无界循环。
+
+### 运行
+
+```bash
+python3 main.py --samples                 # 跑 samples/ 下全部样例
+python3 main.py samples/case-1.rule.json  # 跑单个样例
+python3 -m unittest test_engine -v        # 测试
+```
